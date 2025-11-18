@@ -99,7 +99,7 @@ def draw_win_screen():
 
     return play_again_rect
 
-def draw_grid(grid_data, x_ratio, y_ratio, highlight_row=None, match_flags=None):
+def draw_grid(grid_data, x_ratio, y_ratio, highlight_row=None, match_flags=None, guesses=None):
     x_offset = screen.get_width() * x_ratio
     y_start = screen.get_height() * y_ratio
     tile_size = 80
@@ -107,21 +107,40 @@ def draw_grid(grid_data, x_ratio, y_ratio, highlight_row=None, match_flags=None)
 
     for row in range(6):
         for col in range(5):
-            color = COLOR_MAP["grey"]
+            # Default tile color
+            color = (30, 30, 30)
+
+            # If row is filled in grid data, use its colors
             if row < len(grid_data):
                 color = COLOR_MAP[grid_data[row][col]]
-            pygame.draw.rect(screen, color, pygame.Rect(x_offset + col * spacing, y_start + row * spacing, tile_size, tile_size))
 
+            # Draw the tile
+            tile_rect = pygame.Rect(
+                x_offset + col * spacing,
+                y_start + row * spacing,
+                tile_size,
+                tile_size
+            )
+            pygame.draw.rect(screen, color, tile_rect)
+
+            # --- NEW: Draw the guessed letter inside the tile ---
+            if guesses and row < len(guesses):
+                letter = guesses[row][col].upper()
+                letter_render = font.render(letter, True, (255, 255, 255))
+                screen.blit(letter_render, letter_render.get_rect(center=tile_rect.center))
+
+        # Highlight arrow
         if highlight_row is not None and row == highlight_row:
             arrow = label_font.render(">", True, (255, 255, 255))
-            arrow_offset = int(10 * math.sin(pygame.time.get_ticks() / 200))
-            screen.blit(arrow, (x_offset - 30 + arrow_offset, y_start + row * spacing + 25))
+            offset = int(10 * math.sin(pygame.time.get_ticks() / 200))
+            screen.blit(arrow, (x_offset - 30 + offset, y_start + row * spacing + 25))
 
-
+        # Match flag (green dot)
         if match_flags and row < len(match_flags) and match_flags[row]:
             center_x = x_offset + 5 * spacing + 35
             center_y = y_start + row * spacing + 40
             pygame.draw.circle(screen, (0, 255, 0), (center_x, center_y), 10)
+
 
 def draw_guess_box(guess):
     x_start = screen.get_width() * 0.5 - 260
@@ -203,7 +222,7 @@ while running:
         screen.blit(label_font.render("Player Art:", True, (255, 255, 255)), (screen.get_width() * 0.64, screen.get_height() * 0.12))
 
         draw_grid(target_art, 0.15, 0.18)
-        draw_grid(player_art, 0.64, 0.18, highlight_row=current_row, match_flags=match_flags)
+        draw_grid(player_art, 0.64, 0.18, highlight_row=current_row, match_flags=match_flags, guesses=player_guesses)
         draw_guess_box(current_guess)
         submit_button = draw_submit_button()
         

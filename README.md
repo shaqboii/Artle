@@ -11,4 +11,4 @@ Just install the .zip and run main.py. If you're running this in an IDE with a t
 
 <img width="1920" height="1080" alt="image" src="https://github.com/user-attachments/assets/a78f2721-b692-4ed3-b2f6-a7992c152259" />
 
-In the gameplay screenshot above, we can see that the player has already correctly guessed 3 words, though they can be any that matches the conventions of the solution word. Now they have to guess a word that matches the 4th row's letter indiciations.
+In the gameplay screenshot above, we can see that the player has already correctly guessed 3 words, though they can be any that matches the conventions of the solution word. Now they have to guess a word that matches the 4th row's letter indications.
